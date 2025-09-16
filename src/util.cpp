@@ -22,3 +22,22 @@ void SetupComboBox(HWND hwnd) {
     for (auto item : items)
         SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)item);
 }
+
+void LoadAndShowBMP(HWND hwndParent, const std::string& asset) {
+    if (hCurrentBmp) {
+        DeleteObject(hCurrentBmp);
+        hCurrentBmp = NULL;
+    }
+
+    std::string bmpPath = "img/" + asset + ".bmp";
+    hCurrentBmp = (HBITMAP)LoadImageA(
+        NULL,
+        bmpPath.c_str(),
+        IMAGE_BITMAP,
+        0, 0,
+        LR_LOADFROMFILE | LR_CREATEDIBSECTION
+    );
+
+    SendMessage(hImageView, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hCurrentBmp);
+    SetWindowPos(hImageView, NULL, 300, 240, 350, 350, SWP_NOZORDER | SWP_SHOWWINDOW);
+}

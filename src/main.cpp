@@ -8,7 +8,9 @@
 // Global handles
 HWND hComboBox = nullptr;
 HWND hLabel = nullptr;
+HWND hImageView = nullptr;
 HFONT hFont = nullptr;
+HBITMAP hCurrentBmp = nullptr;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch (msg) {
@@ -41,6 +43,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         };
         for (auto item : items)
             SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)item);
+
+        hImageView = CreateWindowExA(0, "STATIC", NULL,
+            WS_CHILD | WS_VISIBLE | SS_BITMAP,
+            20, 20, 300, 200,hwnd, NULL, GetModuleHandle(NULL), NULL
+        );
         break;
     }
     case WM_COMMAND:
@@ -63,18 +70,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 }
 
                 std::string path;
+                std::string asset;
                 switch(sel) {
-                    case 0: path = "/query?function=WTI&interval=monthly&apikey="; break;
-                    case 1: path = "/query?function=BRENT&interval=monthly&apikey="; break;
-                    case 2: path = "/query?function=NATURAL_GAS&interval=monthly&apikey="; break;
-                    case 3: path = "/query?function=COPPER&interval=monthly&apikey="; break;
-                    case 4: path = "/query?function=ALUMINUM&interval=monthly&apikey="; break;
-                    case 5: path = "/query?function=WHEAT&interval=monthly&apikey="; break;
-                    case 6: path = "/query?function=CORN&interval=monthly&apikey="; break;
-                    case 7: path = "/query?function=SUGAR&interval=monthly&apikey="; break;
-                    case 8: path = "/query?function=COFFEE&interval=monthly&apikey="; break;
-                    case 9: path = "/query?function=ALL_COMMODITIES&interval=monthly&apikey="; break;
-                    default: path = "/query?function=ALL_COMMODITIES&interval=monthly&apikey=";
+                    case 0: path = "/query?function=WTI&interval=monthly&apikey="; asset="wti"; break;
+                    case 1: path = "/query?function=BRENT&interval=monthly&apikey=";  asset="brent"; break;
+                    case 2: path = "/query?function=NATURAL_GAS&interval=monthly&apikey=";  asset="natural_gas"; break;
+                    case 3: path = "/query?function=COPPER&interval=monthly&apikey=";  asset="copper"; break;
+                    case 4: path = "/query?function=ALUMINUM&interval=monthly&apikey=";  asset="aluminum"; break;
+                    case 5: path = "/query?function=WHEAT&interval=monthly&apikey=";  asset="wheat"; break;
+                    case 6: path = "/query?function=CORN&interval=monthly&apikey=";  asset="corn"; break;
+                    case 7: path = "/query?function=SUGAR&interval=monthly&apikey=";  asset="sugar"; break;
+                    case 8: path = "/query?function=COFFEE&interval=monthly&apikey=";  asset="coffee"; break;
+                    case 9: path = "/query?function=ALL_COMMODITIES&interval=monthly&apikey="; asset="all_commodities";  break;
+                    default: path = "/query?function=ALL_COMMODITIES&interval=monthly&apikey="; asset="all_commodities";
                 }
                 std::string fullPath = "https://www.alphavantage.co" + path + apiKey;
                 std::string command = "python scripts/main.py \"" + fullPath;
@@ -82,13 +90,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 int result = system(command.c_str());
 
                 if (result == 0) {
-                    MessageBox(hwnd, TEXT("CSV successfully generated in data/ folder."),
-                            TEXT("Success"), MB_OK | MB_ICONINFORMATION);
+                    LoadAndShowBMP(hwnd, asset);
                 } else {
-                    MessageBox(hwnd, TEXT("Failed to run Python script."),
+                    MessageBox(hwnd, TEXT("Failed to run Python script to generate bitmap chart image."),
                             TEXT("Error"), MB_OK | MB_ICONERROR);
                 }
-
             }
         }
         break;

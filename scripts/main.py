@@ -24,11 +24,6 @@ def main():
         return
 
     try:
-        print("scripts/main.py :: JSON Response:\n", body)
-    except UnicodeEncodeError:
-        print("scripts/main.py :: JSON Response:\n", body.encode("utf-8", "replace").decode("utf-8"))
-
-    try:
         parsed = json.loads(body)
     except Exception as e:
         print("scripts/main.py :: Error parsing JSON:", e)
@@ -72,7 +67,7 @@ def main():
     if dates and values:
         try:
             plt.figure(figsize=(10, 5))
-            plt.plot(dates, values, marker="o", linestyle="-", color="blue", label=function.upper())
+            plt.plot(dates, values, color="blue", label=function)
             plt.xlabel("Date")
             plt.ylabel("Value")
             plt.title(f"Time Series Data: {function.upper()}")
@@ -84,11 +79,17 @@ def main():
             plt.savefig(png_path, dpi=150)
             plt.close()
             print("scripts/main.py :: PNG chart saved to", png_path)
+            
+            img = Image.open(png_path)
+            img = img.resize((350, 200), Image.LANCZOS)
+            img.convert("RGB").save(bmp_path, "BMP")
+            print("scripts/main.py :: BMP image saved to", bmp_path)            
 
-            bmp_path = os.path.join("img", f"{function}.bmp")
-            with Image.open(png_path) as img:
-                img.convert("RGB").save(bmp_path, "BMP")
-            print("scripts/main.py :: BMP image saved to", bmp_path)
+            try:
+                os.remove(out_file)
+                print("scripts/main.py :: Deleted temporary CSV:", out_file)
+            except Exception as e:
+                print("scripts/main.py :: Warning - could not delete CSV:", e)
 
             try:
                 os.remove(png_path)
