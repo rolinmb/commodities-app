@@ -14,7 +14,7 @@ def main():
         return
 
     raw_url = sys.argv[1]
-    print("Fetching:", raw_url)
+    print("Fetching AlphaVantage API")
 
     try:
         with urllib.request.urlopen(raw_url) as resp:
@@ -37,15 +37,12 @@ def main():
         print("scripts/main.py :: Error parsing URL:", e)
         function = "unknown"
 
-    os.makedirs("data", exist_ok=True)
-    os.makedirs("img", exist_ok=True)
-
-    out_file = os.path.join("data", f"{function}.csv")
+    csv_path = os.path.join("data", f"{function}.csv")
 
     dates, values = [], []
 
     try:
-        with open(out_file, "w", newline="", encoding="utf-8") as f:
+        with open(csv_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow(["Date", "Value"])
             for entry in parsed.get("data", []):
@@ -62,7 +59,7 @@ def main():
         print("scripts/main.py :: Error writing CSV:", e)
         return
 
-    print("scripts/main.py :: CSV saved to", out_file)
+    print("scripts/main.py :: CSV saved to", csv_path)
 
     if dates and values:
         try:
@@ -76,18 +73,19 @@ def main():
             plt.tight_layout()
 
             png_path = os.path.join("img", f"{function}.png")
+            bmp_path = os.path.join("img", f"{function}.bmp")
             plt.savefig(png_path, dpi=150)
             plt.close()
             print("scripts/main.py :: PNG chart saved to", png_path)
-            
-            img = Image.open(png_path)
-            img = img.resize((350, 200), Image.LANCZOS)
-            img.convert("RGB").save(bmp_path, "BMP")
-            print("scripts/main.py :: BMP image saved to", bmp_path)            
+
+            with Image.open(png_path) as img:
+                img = img.resize((400, 300), Image.LANCZOS)
+                img.convert("RGB").save(bmp_path, "BMP")
+            print("scripts/main.py :: BMP image saved to", bmp_path)    
 
             try:
-                os.remove(out_file)
-                print("scripts/main.py :: Deleted temporary CSV:", out_file)
+                os.remove(csv_path)
+                print("scripts/main.py :: Deleted temporary CSV:", csv_path)
             except Exception as e:
                 print("scripts/main.py :: Warning - could not delete CSV:", e)
 

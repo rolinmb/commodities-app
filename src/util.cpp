@@ -39,5 +39,4 @@ void LoadAndShowBMP(HWND hwndParent, const std::string& asset) {
     );
 
     SendMessage(hImageView, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hCurrentBmp);
-    SetWindowPos(hImageView, NULL, 300, 240, 350, 350, SWP_NOZORDER | SWP_SHOWWINDOW);
 }

@@ -45,8 +45,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)item);
 
         hImageView = CreateWindowExA(0, "STATIC", NULL,
-            WS_CHILD | WS_VISIBLE | SS_BITMAP,
-            20, 20, 300, 200,hwnd, NULL, GetModuleHandle(NULL), NULL
+            WS_CHILD | WS_VISIBLE | SS_BITMAP | SS_REALSIZEIMAGE,
+            300, 240, 350, 200, hwnd, NULL, GetModuleHandle(NULL), NULL
         );
         break;
     }
@@ -93,7 +93,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     LoadAndShowBMP(hwnd, asset);
                 } else {
                     MessageBox(hwnd, TEXT("Failed to run Python script to generate bitmap chart image."),
-                            TEXT("Error"), MB_OK | MB_ICONERROR);
+                        TEXT("Error"), MB_OK | MB_ICONERROR);
                 }
             }
         }
