@@ -3,3 +3,5 @@ src/main.o
 src/main
 .vscode
 src/key.txt
+data
+img

@@ -62,47 +62,32 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     return 0;
                 }
 
-                std::string jsonResult;
-                std::string host = "www.alphavantage.co";
                 std::string path;
-
                 switch(sel) {
-                    case 0:
-                        path = "/query?function=WTI&interval=monthly&apikey=";
-                        break;
-                    case 1:
-                        path = "/query?function=BRENT&interval=monthly&apikey=";
-                        break;
-                    case 2:
-                        path = "/query?function=NATURAL_GAS&interval=monthly&apikey=";
-                        break;
-                    case 3:
-                        path = "/query?function=COPPER&interval=monthly&apikey=";
-                        break;
-                    case 4:
-                        path = "/query?function=WHEAT&interval=monthly&apikey=";
-                        break;
-                    case 5:
-                        path = "/query?function=CORN&interval=monthly&apikey=";
-                        break;
-                    case 6:
-                        path = "/query?function=COTTON&interval=monthly&apikey=";
-                        break;
-                    case 7:
-                        path = "/query?function=SUGAR&interval=monthly&apikey=";
-                        break;
-                    case 8:
-                        path = "/query?function=COFFEE&interval=monthly&apikey=";
-                        break;
-                    case 9:
-                        path = "/query?function=WHEAT&interval=monthly&apikey=";
-                        break;
-                    default:
-                        path = "/query?function=ALL_COMMODITIES&interval=monthly&apikey=";
+                    case 0: path = "/query?function=WTI&interval=monthly&apikey="; break;
+                    case 1: path = "/query?function=BRENT&interval=monthly&apikey="; break;
+                    case 2: path = "/query?function=NATURAL_GAS&interval=monthly&apikey="; break;
+                    case 3: path = "/query?function=COPPER&interval=monthly&apikey="; break;
+                    case 4: path = "/query?function=ALUMINUM&interval=monthly&apikey="; break;
+                    case 5: path = "/query?function=WHEAT&interval=monthly&apikey="; break;
+                    case 6: path = "/query?function=CORN&interval=monthly&apikey="; break;
+                    case 7: path = "/query?function=SUGAR&interval=monthly&apikey="; break;
+                    case 8: path = "/query?function=COFFEE&interval=monthly&apikey="; break;
+                    case 9: path = "/query?function=ALL_COMMODITIES&interval=monthly&apikey="; break;
+                    default: path = "/query?function=ALL_COMMODITIES&interval=monthly&apikey=";
                 }
-                std::string fullPath = path + apiKey;
-                jsonResult = GetHttps(host, fullPath);
-                MessageBoxA(hwnd, jsonResult.c_str(), "JSON Response", MB_OK);
+                std::string fullPath = "https://www.alphavantage.co" + path + apiKey;
+                std::string command = "python scripts/main.py \"" + fullPath;
+
+                int result = system(command.c_str());
+
+                if (result == 0) {
+                    MessageBox(hwnd, TEXT("CSV successfully generated in data/ folder."),
+                            TEXT("Success"), MB_OK | MB_ICONINFORMATION);
+                } else {
+                    MessageBox(hwnd, TEXT("Failed to run Python script."),
+                            TEXT("Error"), MB_OK | MB_ICONERROR);
+                }
 
             }
         }
