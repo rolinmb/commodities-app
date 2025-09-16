@@ -2,4 +2,4 @@ src/main.exe
 src/main.o
 src/main
 .vscode
-src/key.py
+src/key.txt
