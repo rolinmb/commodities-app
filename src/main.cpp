@@ -101,7 +101,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         path = "/query?function=ALL_COMMODITIES&interval=monthly&apikey=";
                 }
                 std::string fullPath = path + apiKey;
-                jsonResult = HttpGet(host, fullPath);
+                jsonResult = GetHttps(host, fullPath);
                 MessageBoxA(hwnd, jsonResult.c_str(), "JSON Response", MB_OK);
 
             }
